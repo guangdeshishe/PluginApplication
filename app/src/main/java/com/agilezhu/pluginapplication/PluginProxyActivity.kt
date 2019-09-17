@@ -37,6 +37,17 @@ class PluginProxyActivity : AppCompatActivity() {
         pluginActivity?.onCreate(savedInstanceState)
     }
 
+    override fun startActivity(intent: Intent?) {
+        if (intent?.getStringExtra(PLUGIN_ACTIVITY_NAME_KEY).isNullOrEmpty()) {
+            intent?.component?.className?.let {
+                PluginProxyActivity.open(this, it)
+            }
+        } else {
+            super.startActivity(intent)
+        }
+
+    }
+
     override fun getClassLoader(): ClassLoader {
         return PluginManager.getInstance().getDexClassLoader() ?: super.getClassLoader()
     }

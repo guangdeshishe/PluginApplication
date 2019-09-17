@@ -1,6 +1,7 @@
 package com.agilezhu.plugin
 
 import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -17,92 +18,105 @@ import com.agilezhu.base.IPluginActivity
  * @time 16:19
  */
 open class BaseActivity : AppCompatActivity(), IPluginActivity {
-    protected var that: Activity? = null
+    protected lateinit var that: Activity
+    private var isProxy = false
 
     override fun attach(context: Activity) {
         that = context
+        isProxy = true
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        if (that == null) {
+        if (!this::that.isInitialized) {
+            that = this
+        }
+        if (!isProxy) {
             super.onCreate(savedInstanceState)
         }
     }
 
     override fun setContentView(layoutResID: Int) {
-        if (that == null) {
+        if (!isProxy) {
             super.setContentView(layoutResID)
         } else {
-            that!!.setContentView(layoutResID)
+            that.setContentView(layoutResID)
         }
     }
 
     override fun <T : View?> findViewById(id: Int): T {
-        return if (that == null) {
+        return if (!isProxy) {
             super.findViewById<T>(id)
         } else {
-            that!!.findViewById<T>(id)
+            that.findViewById<T>(id)
         }
     }
 
     override fun getClassLoader(): ClassLoader {
-        return if (that == null) {
+        return if (!isProxy) {
             super.getClassLoader()
         } else {
-            that!!.classLoader
+            that.classLoader
         }
     }
 
     override fun getLayoutInflater(): LayoutInflater {
-        return if (that == null) {
+        return if (!isProxy) {
             super.getLayoutInflater()
         } else {
-            that!!.layoutInflater
+            that.layoutInflater
         }
     }
 
     override fun getWindow(): Window {
-        return if (that == null) {
+        return if (!isProxy) {
             super.getWindow()
         } else {
-            that!!.window
+            that.window
         }
     }
 
     override fun getWindowManager(): WindowManager {
-        return if (that == null) {
+        return if (!isProxy) {
             super.getWindowManager()
         } else {
-            that!!.windowManager
+            that.windowManager
+        }
+    }
+
+    override fun startActivity(intent: Intent?) {
+        if (!isProxy) {
+            super.startActivity(intent)
+        } else {
+            that.startActivity(intent)
         }
     }
 
     override fun onStart() {
-        if (that == null) {
+        if (!isProxy) {
             super.onStart()
         }
     }
 
     override fun onResume() {
-        if (that == null) {
+        if (!isProxy) {
             super.onResume()
         }
     }
 
     override fun onPause() {
-        if (that == null) {
+        if (!isProxy) {
             super.onPause()
         }
     }
 
     override fun onStop() {
-        if (that == null) {
+        if (!isProxy) {
             super.onStop()
         }
     }
 
     override fun onDestroy() {
-        if (that == null) {
+        if (!isProxy) {
             super.onDestroy()
         }
     }
